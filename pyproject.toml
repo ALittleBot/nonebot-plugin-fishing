@@ -12,7 +12,6 @@ dependencies = [
     "nonebot-plugin-localstore>=0.6.0",
     "sqlalchemy>=2.0.27",
 ]
-requires-python = "==3.12.*"
 readme = "README.md"
 license = {text = "MIT"}
 
