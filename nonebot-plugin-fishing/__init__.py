@@ -1,4 +1,5 @@
 from nonebot import on_command
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Event
 
 import asyncio
@@ -9,6 +10,15 @@ from .data_source import (choice,
                           get_stats,
                           save_fish,
                           get_backpack)
+
+__plugin_meta__ = PluginMetadata(
+    name="赛博钓鱼",
+    description="你甚至可以电子钓鱼",
+    usage="发送“钓鱼”",
+    type="application",
+    homepage="https://github.com/C14H22O/nonebot-plugin-fishing",
+    config=Config
+)
 
 fishing = on_command("fishing", aliases={"钓鱼"})
 stats = on_command("stats", aliases={"统计信息"})
