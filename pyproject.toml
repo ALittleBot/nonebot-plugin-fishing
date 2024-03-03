@@ -1,0 +1,21 @@
+[project]
+name = "nonebot-plugin-fishing"
+version = "0.1.0"
+description = "你甚至可以电子钓鱼"
+authors = [
+    {name = "C14H22O", email = "160833462+C14H22O@users.noreply.github.com"},
+]
+dependencies = [
+    "nonebot2>=2.2.1",
+    "asyncio>=3.4.3",
+    "pydantic>=2.6.3",
+    "nonebot-plugin-localstore>=0.6.0",
+    "sqlalchemy>=2.0.27",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
