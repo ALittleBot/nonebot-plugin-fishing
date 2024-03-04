@@ -110,7 +110,7 @@ async def get_stats(user_id: str) -> str:
         fishing_records = await session.execute(select(FishingRecord))
         for fishing_record in fishing_records.scalars():
             if fishing_record.user_id == user_id:
-                return f"你钓鱼了 {fishing_record.frequency} 次\n"
+                return f"你钓鱼了 {fishing_record.frequency} 次"
         return "你还没有钓过鱼, 快去钓鱼吧"
 
 
