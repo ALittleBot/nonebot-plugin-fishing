@@ -7,7 +7,6 @@ authors = [
 ]
 dependencies = [
     "nonebot2>=2.2.1",
-    "asyncio>=3.4.3",
     "pydantic>=2.6.3",
     "nonebot-plugin-localstore>=0.6.0",
     "sqlalchemy>=2.0.27",

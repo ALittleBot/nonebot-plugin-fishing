@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:3da5f997fd2d2950c71a6237cbd0fd44a17af9e716adfbd9d37f1fe2ab9d597c"
+content_hash = "sha256:2d7497788891265206aa1c226547d1e6af4a30d4678c7c48447a611720d1cc6f"
 
 [[package]]
 name = "aiosqlite"
@@ -33,16 +33,6 @@ dependencies = [
 files = [
     {file = "annotated_types-0.6.0-py3-none-any.whl", hash = "sha256:0641064de18ba7a25dee8f96403ebc39113d0cb953a01429249d5c7564666a43"},
     {file = "annotated_types-0.6.0.tar.gz", hash = "sha256:563339e807e53ffd9c267e99fc6d9ea23eb8443c08f112651963e24e22f84a5d"},
-]
-
-[[package]]
-name = "asyncio"
-version = "3.4.3"
-summary = "reference implementation of PEP 3156"
-groups = ["default"]
-files = [
-    {file = "asyncio-3.4.3-py3-none-any.whl", hash = "sha256:c4d18b22701821de07bd6aea8b53d21449ec0ec5680645e5317062ea21817d2d"},
-    {file = "asyncio-3.4.3.tar.gz", hash = "sha256:83360ff8bc97980e4ff25c964c7bd3923d333d177aa4f7fb736b019f26c7cb41"},
 ]
 
 [[package]]
