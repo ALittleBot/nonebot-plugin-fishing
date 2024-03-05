@@ -10,9 +10,8 @@
 
 _✨ 你甚至可以电子钓鱼 ✨_
 
-
 <a href="./LICENSE">
-    <img src="https://img.shields.io/github/license/owner/nonebot-plugin-fishing.svg" alt="license">
+    <img src="https://img.shields.io/github/license/C14H22O/nonebot-plugin-fishing.svg" alt="license">
 </a>
 <a href="https://pypi.python.org/pypi/nonebot-plugin-fishing">
     <img src="https://img.shields.io/pypi/v/nonebot-plugin-fishing.svg" alt="pypi">
@@ -73,8 +72,8 @@ _✨ 你甚至可以电子钓鱼 ✨_
 
 ## 🎉 使用
 ### 指令表
-| 指令 | 权限 | 需要@ | 范围 | 说明 |
-|:-----:|:----:|:----:|:----:|:----:|
-| 钓鱼 | 群员 | 否 | 群聊/私聊 | 放下鱼竿 |
-| 统计信息 | 群员 | 否 | 群聊/私聊 | 查看钓鱼次数 |
-| 背包 | 群员 | 否 | 群聊/私聊 | 查看背包 |
+| 指令 | 范围 | 说明 |
+|:-----:|:----:|:----:|
+| 钓鱼 | 所有 | 放下鱼竿 |
+| 统计信息 | 所有 | 查看钓鱼次数 |
+| 背包 | 所有 | 查看背包 |
