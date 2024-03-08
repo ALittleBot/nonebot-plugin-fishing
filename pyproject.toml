@@ -11,6 +11,7 @@ dependencies = [
     "nonebot-plugin-localstore>=0.6.0",
     "sqlalchemy>=2.0.27",
     "aiosqlite>=0.20.0",
+    "nonebot-plugin-orm>=0.7.1",
 ]
 readme = "README.md"
 license = {text = "MIT"}
