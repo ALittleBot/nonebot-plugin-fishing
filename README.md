@@ -82,6 +82,6 @@ _✨ 你甚至可以电子钓鱼 ✨_
 
 ## 📝 Todo
 
-- [ ] 重写数据库逻辑（改为使用[nonebot/plugin-orm](https://github.com/nonebot/plugin-orm)）
+- [x] 重写数据库逻辑（改为使用[nonebot/plugin-orm](https://github.com/nonebot/plugin-orm)）
 - [ ] 增加系统商店，卖出钓到的鱼们
 - [ ] 为鱼竿增加耐久度，耐久度为0时需重新购买鱼竿
