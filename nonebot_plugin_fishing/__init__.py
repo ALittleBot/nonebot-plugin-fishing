@@ -1,4 +1,5 @@
-from nonebot import on_command
+from nonebot import on_command, require
+require("nonebot_plugin_orm")  # noqa
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Event
 

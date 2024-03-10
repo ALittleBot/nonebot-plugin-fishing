@@ -1,13 +1,10 @@
 from nonebot import get_plugin_config
-from nonebot import require
-from nonebot.log import logger
 
 import random
 import time
 import json
 from sqlalchemy import select
 from sqlalchemy import update
-require("nonebot_plugin_orm")  # noqa
 from nonebot_plugin_orm import get_session
 
 from .config import Config

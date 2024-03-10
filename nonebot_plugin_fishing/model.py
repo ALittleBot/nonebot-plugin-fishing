@@ -1,5 +1,3 @@
-from nonebot import require
-require("nonebot_plugin_orm")  # noqa
 from nonebot_plugin_orm import Model
 from sqlalchemy.orm import Mapped, mapped_column
 
