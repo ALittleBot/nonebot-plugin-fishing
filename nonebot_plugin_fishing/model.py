@@ -8,3 +8,4 @@ class FishingRecord(Model):
     time: Mapped[int]
     frequency: Mapped[int]
     fishes: Mapped[str]
+    coin: Mapped[int]

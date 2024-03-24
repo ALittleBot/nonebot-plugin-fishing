@@ -1,5 +1,3 @@
-from nonebot import get_plugin_config
-
 import random
 import time
 import json
@@ -7,23 +5,21 @@ from sqlalchemy import select
 from sqlalchemy import update
 from nonebot_plugin_orm import get_session
 
-from .config import Config
+from .config import config
 from .model import FishingRecord
-
-plugin_config = get_plugin_config(Config)
 
 
 def choice() -> tuple:
-    config_fishes = plugin_config.fishes
-    weights = [weight[2] for weight in config_fishes]
+    config_fishes = config.fishes
+    weights = [weight["weight"] for weight in config_fishes]
     choices = random.choices(
         config_fishes,
         weights=weights,
     )
-    return choices[0][0], choices[0][1]
+    return choices[0]["name"], choices[0]["frequency"]
 
 
-async def get_fishing(user_id: str) -> bool:
+async def is_fishing(user_id: str) -> bool:
     time_now = int(time.time())
     session = get_session()
     async with session.begin():
@@ -39,7 +35,7 @@ async def get_fishing(user_id: str) -> bool:
 
 async def save_fish(user_id: str, fish_name: str) -> None:
     time_now = int(time.time())
-    fishing_limit = plugin_config.fishing_limit
+    fishing_limit = config.fishing_limit
     session = get_session()
     async with session.begin():
         records = await session.execute(select(FishingRecord))
@@ -68,7 +64,8 @@ async def save_fish(user_id: str, fish_name: str) -> None:
                 user_id=user_id,
                 time=time_now + fishing_limit,
                 frequency=1,
-                fishes=dump_fishes
+                fishes=dump_fishes,
+                coin=0
             )
             session.add(new_record)
             await session.commit()
