@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-
 from typing import List, Dict
 from nonebot import get_plugin_config
 
@@ -34,6 +33,8 @@ class Config(BaseModel):
     ]
 
     fishing_limit: int = 30
+
+    fishing_coin_name: str = "FC"  # Fishing Coin
 
 
 config = get_plugin_config(Config)
