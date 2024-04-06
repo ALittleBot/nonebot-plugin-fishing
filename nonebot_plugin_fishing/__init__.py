@@ -2,7 +2,8 @@ from nonebot import on_command, require
 
 require("nonebot_plugin_orm")  # noqa
 from nonebot.plugin import PluginMetadata
-from nonebot.adapters import Event
+from nonebot.adapters import Event, Message
+from nonebot.params import CommandArg
 
 import asyncio
 
@@ -11,7 +12,9 @@ from .data_source import (choice,
                           is_fishing,
                           get_stats,
                           save_fish,
-                          get_backpack)
+                          get_backpack,
+                          sell_fish,
+                          get_balance)
 
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
@@ -19,13 +22,15 @@ __plugin_meta__ = PluginMetadata(
     usage="发送“钓鱼”，放下鱼竿。",
     type="application",
     homepage="https://github.com/C14H22O/nonebot-plugin-fishing",
-    config=Config
+    config=Config,
+    supported_adapters=None
 )
 
-fishing = on_command("fishing", aliases={"钓鱼"})
-stats = on_command("stats", aliases={"统计信息"})
-backpack = on_command("backpack", aliases={"背包"})
-sell = on_command("sell", aliases={"卖鱼"})
+fishing = on_command("fishing", aliases={"钓鱼"}, priority=5)
+stats = on_command("stats", aliases={"统计信息"}, priority=5)
+backpack = on_command("backpack", aliases={"背包"}, priority=5)
+sell = on_command("sell", aliases={"卖鱼"}, priority=5)
+balance = on_command("balance", aliases={"余额"}, priority=5)
 
 
 @fishing.handle()
@@ -56,5 +61,15 @@ async def _backpack(event: Event):
 
 
 @sell.handle()
-async def _sell(event: Event):
-    await sell.finish("商店正在施工中…")
+async def _sell(event: Event, arg: Message = CommandArg()):
+    fish_name = arg.extract_plain_text()
+    if fish_name == "":
+        await sell.finish("请输入要卖出的鱼的名字, 如 /卖鱼 小鱼")
+    user_id = event.get_user_id()
+    await sell.finish(await sell_fish(user_id, fish_name))
+
+
+@balance.handle()
+async def _balance(event: Event):
+    user_id = event.get_user_id()
+    await balance.finish(await get_balance(user_id))
