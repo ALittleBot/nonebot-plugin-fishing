@@ -8,13 +8,15 @@ from nonebot.params import CommandArg
 import asyncio
 
 from .config import Config
-from .data_source import (choice,
-                          is_fishing,
-                          get_stats,
-                          save_fish,
-                          get_backpack,
-                          sell_fish,
-                          get_balance)
+from .data_source import (
+    choice,
+    is_fishing,
+    get_stats,
+    save_fish,
+    get_backpack,
+    sell_fish,
+    get_balance
+)
 
 __plugin_meta__ = PluginMetadata(
     name="赛博钓鱼",
@@ -31,6 +33,7 @@ stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额"}, priority=5)
+free_fish = on_command("free_fish", aliases={"放生"}, priority=5)
 
 
 @fishing.handle()
