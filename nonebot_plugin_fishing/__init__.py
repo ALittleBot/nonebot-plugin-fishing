@@ -4,10 +4,11 @@ require("nonebot_plugin_orm")  # noqa
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Event, Message
 from nonebot.params import CommandArg
+from nonebot.rule import Rule
 
 import asyncio
 
-from .config import Config
+from .config import Config, is_free_fish
 from .data_source import (
     choice,
     is_fishing,
@@ -15,7 +16,8 @@ from .data_source import (
     save_fish,
     get_backpack,
     sell_fish,
-    get_balance
+    get_balance,
+    free_fish
 )
 
 __plugin_meta__ = PluginMetadata(
@@ -28,16 +30,18 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters=None
 )
 
+free_fish_rule = Rule(is_free_fish)
+
 fishing = on_command("fishing", aliases={"钓鱼"}, priority=5)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
 backpack = on_command("backpack", aliases={"背包"}, priority=5)
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额"}, priority=5)
-free_fish = on_command("free_fish", aliases={"放生"}, priority=5)
+free_fish_cmd = on_command("free_fish", aliases={"放生"}, rule=free_fish_rule, priority=5)
 
 
 @fishing.handle()
-async def _fishing(event: Event):
+async def _(event: Event):
     user_id = event.get_user_id()
     if not await is_fishing(user_id):
         await fishing.finish("河累了, 休息一下吧")
@@ -52,19 +56,19 @@ async def _fishing(event: Event):
 
 
 @stats.handle()
-async def _stats(event: Event):
+async def _(event: Event):
     user_id = event.get_user_id()
     await stats.finish(await get_stats(user_id))
 
 
 @backpack.handle()
-async def _backpack(event: Event):
+async def _(event: Event):
     user_id = event.get_user_id()
     await backpack.finish(await get_backpack(user_id))
 
 
 @sell.handle()
-async def _sell(event: Event, arg: Message = CommandArg()):
+async def _(event: Event, arg: Message = CommandArg()):
     fish_name = arg.extract_plain_text()
     if fish_name == "":
         await sell.finish("请输入要卖出的鱼的名字, 如 /卖鱼 小鱼")
@@ -73,6 +77,15 @@ async def _sell(event: Event, arg: Message = CommandArg()):
 
 
 @balance.handle()
-async def _balance(event: Event):
+async def _(event: Event):
     user_id = event.get_user_id()
     await balance.finish(await get_balance(user_id))
+
+
+@free_fish_cmd.handle()
+async def _(event: Event, arg: Message = CommandArg()):
+    fish_name = arg.extract_plain_text()
+    if fish_name == "":
+        await sell.finish("请输入要放生的鱼的名字, 如 /放生 测试鱼")
+    user_id = event.get_user_id()
+    await free_fish_cmd.finish(await free_fish(user_id, fish_name))

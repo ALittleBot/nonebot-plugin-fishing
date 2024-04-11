@@ -6,7 +6,7 @@ from sqlalchemy import update
 from nonebot_plugin_orm import get_session
 
 from .config import config
-from .model import FishingRecord
+from .model import FishingRecord, SpecialFishes
 
 fishing_coin_name = config.fishing_coin_name
 
@@ -144,3 +144,27 @@ async def get_balance(user_id: str) -> str:
             if fishes_record.user_id == user_id:
                 return f"你有 {fishes_record.coin} {fishing_coin_name}"
         return "你什么也没有 :)"
+
+
+async def free_fish(user_id: str, fish_name: str) -> str:
+    session = get_session()
+    async with session.begin():
+        fishes_records = await session.execute(select(FishingRecord))
+        for fishes_record in fishes_records.scalars():
+            if fishes_record.user_id == user_id:
+                user_coin = fishes_record.coin
+                if user_coin < config.free_fish_price:
+                    free_fish_coin_less = str(config.free_fish_price - fishes_record.coin)
+                    return f"你没有足够的 {fishing_coin_name}, 还需 {free_fish_coin_less} {fishing_coin_name}"
+        user_coin -= config.free_fish_price
+        new_record = SpecialFishes(
+            user_id=user_id,
+            fish=fish_name
+        )
+        session.add(new_record)
+        user_update = update(FishingRecord).where(FishingRecord.user_id == user_id).values(
+            coin=user_coin
+        )
+        await session.execute(user_update)
+        await session.commit()
+        return f"你花费 {config.free_fish_price} {fishing_coin_name} 放生了 {fish_name}, 未来或许会被有缘人钓到呢"

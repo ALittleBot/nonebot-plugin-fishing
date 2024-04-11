@@ -4,6 +4,7 @@ from nonebot import get_plugin_config
 
 
 class Config(BaseModel):
+
     fishes: List[Dict] = [
         {
             "name": "小鱼",
@@ -37,9 +38,11 @@ class Config(BaseModel):
 
     free_fish_enabled: bool = False
 
+    free_fish_price: int = 50
+
 
 config = get_plugin_config(Config)
 
 
 async def is_free_fish() -> bool:
-    return Config.free_fish_enabled
+    return config.free_fish_enabled
