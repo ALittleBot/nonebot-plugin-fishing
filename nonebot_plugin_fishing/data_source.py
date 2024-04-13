@@ -1,6 +1,7 @@
 import random
 import time
 import json
+
 from sqlalchemy import select
 from sqlalchemy import update
 from nonebot_plugin_orm import get_session
@@ -25,13 +26,17 @@ def get_price(fish_name: str) -> int:
     """获取鱼的价格"""
     config_fishes = config.fishes
     return next(
-        (fish["price"] for fish in config_fishes if fish["name"] == fish_name),
+        (
+            fish["price"]
+            for fish in config_fishes
+            if fish["name"] == fish_name
+        ),
         0
     )
 
 
-async def is_fishing(user_id: str) -> bool:
-    """判断是否正在钓鱼"""
+async def can_fishing(user_id: str) -> bool:
+    """判断是否可以钓鱼"""
     time_now = int(time.time())
     session = get_session()
     async with session.begin():
@@ -44,6 +49,17 @@ async def is_fishing(user_id: str) -> bool:
             ),
             True
         )
+
+
+def can_free_fish() -> bool:
+    return config.special_fish_enabled
+
+
+async def can_catch_special_fish():
+    session = get_session()
+    async with session.begin():
+        records = await session.execute(select(SpecialFishes))
+        return len(records.all()) != 0 and random.random() <= config.special_fish_probability
 
 
 async def save_fish(user_id: str, fish_name: str) -> None:
@@ -95,7 +111,7 @@ async def get_stats(user_id: str) -> str:
                 for fishing_record in fishing_records.scalars()
                 if fishing_record.user_id == user_id
             ),
-            "你还没有钓过鱼，快去钓鱼吧",
+            "你还没有钓过鱼，快去钓鱼吧"
         )
 
 
@@ -178,10 +194,10 @@ async def free_fish(user_id: str, fish_name: str) -> str:
         for fishes_record in fishes_records.scalars():
             if fishes_record.user_id == user_id:
                 user_coin = fishes_record.coin
-                if user_coin < config.free_fish_price:
-                    free_fish_coin_less = str(config.free_fish_price - fishes_record.coin)
-                    return f"你没有足够的 {fishing_coin_name}, 还需 {free_fish_coin_less} {fishing_coin_name}"
-        user_coin -= config.free_fish_price
+                if user_coin < config.special_fish_price:
+                    special_fish_coin_less = str(config.special_fish_price - fishes_record.coin)
+                    return f"你没有足够的 {fishing_coin_name}, 还需 {special_fish_coin_less} {fishing_coin_name}"
+        user_coin -= config.special_fish_price
         new_record = SpecialFishes(
             user_id=user_id,
             fish=fish_name
@@ -192,4 +208,4 @@ async def free_fish(user_id: str, fish_name: str) -> str:
         )
         await session.execute(user_update)
         await session.commit()
-        return f"你花费 {config.free_fish_price} {fishing_coin_name} 放生了 {fish_name}, 未来或许会被有缘人钓到呢"
+        return f"你花费 {config.special_fish_price} {fishing_coin_name} 放生了 {fish_name}, 未来或许会被有缘人钓到呢"

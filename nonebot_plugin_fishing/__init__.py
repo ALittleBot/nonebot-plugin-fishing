@@ -8,10 +8,12 @@ from nonebot.rule import Rule
 
 import asyncio
 
-from .config import Config, is_free_fish
+from .config import Config, config
 from .data_source import (
     choice,
-    is_fishing,
+    can_fishing,
+    can_catch_special_fish,
+    can_free_fish,
     get_stats,
     save_fish,
     get_backpack,
@@ -30,7 +32,7 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters=None
 )
 
-free_fish_rule = Rule(is_free_fish)
+free_fish_rule = Rule(can_free_fish)
 
 fishing = on_command("fishing", aliases={"钓鱼"}, priority=5)
 stats = on_command("stats", aliases={"统计信息"}, priority=5)
@@ -43,9 +45,11 @@ free_fish_cmd = on_command("free_fish", aliases={"放生"}, rule=free_fish_rule,
 @fishing.handle()
 async def _(event: Event):
     user_id = event.get_user_id()
-    if not await is_fishing(user_id):
+    if not await can_fishing(user_id):
         await fishing.finish("河累了, 休息一下吧")
     await fishing.send("正在钓鱼…")
+    if await can_catch_special_fish():
+        await fishing.finish("钓特殊鱼")
     choice_result = choice()
     fish = choice_result[0]
     sleep_time = choice_result[1]

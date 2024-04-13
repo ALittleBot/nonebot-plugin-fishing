@@ -36,13 +36,11 @@ class Config(BaseModel):
 
     fishing_coin_name: str = "FC"  # It means Fishing Coin.
 
-    free_fish_enabled: bool = False
+    special_fish_enabled: bool = False
 
-    free_fish_price: int = 50
+    special_fish_price: int = 50
+
+    special_fish_probability: float = 0.01
 
 
 config = get_plugin_config(Config)
-
-
-async def is_free_fish() -> bool:
-    return config.free_fish_enabled
