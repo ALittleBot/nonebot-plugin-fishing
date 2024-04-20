@@ -98,10 +98,6 @@ _✨ 你甚至可以电子钓鱼 ✨_
 
 ## 🔨 更新
 
-由于 v0.2.2 版本出现重大数据库迁移 bug，需按以下操作进行升级：
-
-[v0.2.2](https://pypi.org/project/nonebot-plugin-fishing/0.2.2/) => [v0.2.3_alpha2](https://pypi.org/project/nonebot-plugin-fishing/0.2.3a2/) => 最新版本
-
 每一次升级后，都需执行 `nb orm upgrade`。
 
 ## 📝 Todo
