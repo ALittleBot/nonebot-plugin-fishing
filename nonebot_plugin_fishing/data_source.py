@@ -174,7 +174,7 @@ def print_backpack(backpack: dict, special_backpack=None) -> str:
             f"{fish_name}×{str(quantity)}"
             for fish_name, quantity in special_backpack.items()
         ]
-        return f"背包:\n{"\n".join(result)}\n\n特殊鱼:\n{"\n".join(special_result)}"
+        return "背包:\n" + "\n".join(result) + "\n\n特殊鱼:\n" + "\n".join(special_result)
     return "背包:\n" + "\n".join(result)
 
 
