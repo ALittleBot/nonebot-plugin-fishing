@@ -84,7 +84,11 @@ _✨ 你甚至可以电子钓鱼 ✨_
 }
 ```
 
+## 🔨 更新
 
+每一次更新后，需执行 `nb orm upgrade`。
+
+由于此前版本数据库迁移存在问题，故插件无法对 [v0.2.1](https://pypi.org/project/nonebot-plugin-fishing/0.2.1/) 版本及以前的数据进行迁移。
 
 ## 🎉 使用
 

@@ -34,7 +34,13 @@ class Config(BaseModel):
 
     fishing_limit: int = 30
 
-    fishing_coin_name: str = "FC"  # Fishing Coin
+    fishing_coin_name: str = "FC"  # It means Fishing Coin.
+
+    special_fish_enabled: bool = False
+
+    special_fish_price: int = 50
+
+    special_fish_probability: float = 0.01
 
 
 config = get_plugin_config(Config)
