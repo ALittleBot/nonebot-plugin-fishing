@@ -119,7 +119,8 @@ _✨ 你甚至可以电子钓鱼 ✨_
 
 - [x] 重写数据库逻辑（改为使用 [nonebot/plugin-orm](https://github.com/nonebot/plugin-orm)）
 - [x] 增加系统商店，卖出钓到的鱼们
-- [ ] 赛博放生 [#4](https://github.com/C14H22O/nonebot-plugin-fishing/issues/4)
+- [ ] 赛博放生 [#4](https://github.com/C14H22O/nonebot-plugin-fishing/issues/4) （已基本完成）
+- [ ] 使用 [nonebot_plugin_chikari_economy](https://github.com/mrqx0195/nonebot_plugin_chikari_economy) 经济系统
 - [ ] 为鱼竿增加耐久度，耐久度为0时需重新购买鱼竿
 - [ ] 为钓鱼背包添加排序
 - [ ] 添加成就系统
