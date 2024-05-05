@@ -79,8 +79,7 @@ _✨ 你甚至可以电子钓鱼 ✨_
 其中 `fishes` 配置项说明如下：
 
 ```dotenv
-FISHES=
-'
+FISHES='
 [
   {
     "name": "小鱼", # 鱼的名称
