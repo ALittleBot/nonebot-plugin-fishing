@@ -1,6 +1,7 @@
 from nonebot import on_command, require
 
 require("nonebot_plugin_orm")  # noqa
+
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Event, Message
 from nonebot.params import CommandArg
@@ -28,7 +29,7 @@ __plugin_meta__ = PluginMetadata(
     description="你甚至可以电子钓鱼",
     usage="发送“钓鱼”，放下鱼竿。",
     type="application",
-    homepage="https://github.com/C14H22O/nonebot-plugin-fishing",
+    homepage="https://github.com/ALittleBot/nonebot-plugin-fishing",
     config=Config,
     supported_adapters=None
 )
@@ -75,11 +76,15 @@ async def _(event: Event):
 
 @sell.handle()
 async def _(event: Event, arg: Message = CommandArg()):
-    fish_name = arg.extract_plain_text()
-    if fish_name == "":
-        await sell.finish("请输入要卖出的鱼的名字, 如 /卖鱼 小鱼")
+    fish_info = arg.extract_plain_text()
+    if fish_info == "":
+        await sell.finish("请输入要卖出的鱼的名字和数量 (数量为1时可省略), 如 /卖鱼 小鱼 1")
     user_id = event.get_user_id()
-    await sell.finish(await sell_fish(user_id, fish_name))
+    if len(fish_info.split()) == 1:
+        await sell.finish(await sell_fish(user_id, fish_info))
+    else:
+        fish_name, fish_quantity = fish_info.split()
+        await sell.finish(await sell_fish(user_id, fish_name, int(fish_quantity)))
 
 
 @balance.handle()

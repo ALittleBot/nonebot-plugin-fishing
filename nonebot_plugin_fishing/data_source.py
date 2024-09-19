@@ -193,17 +193,20 @@ async def get_backpack(user_id: str) -> str:
         return "你的背包里空无一物"
 
 
-async def sell_fish(user_id: str, fish_name: str) -> str:
+async def sell_fish(user_id: str, fish_name: str, quantity: int = 1) -> str:
     """
     卖鱼
 
     参数：
-      - user_id: 将要卖鱼的用户唯一标识符，用于区分谁正在卖鱼
+      - user_id: 用户标识符
       - fish_name: 将要卖鱼的鱼名称
+      - quantity: 卖出鱼的数量
 
     返回：
-      - (str): 待回复的文本
+      - (str): 回复的文本
     """
+    if quantity <= 0:
+        return "你在卖什么 w(ﾟДﾟ)w"
     session = get_session()
     async with session.begin():
         select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
@@ -212,19 +215,22 @@ async def sell_fish(user_id: str, fish_name: str) -> str:
             loads_fishes = json.loads(fishes_record.fishes)
             if fish_name in loads_fishes and loads_fishes[fish_name] > 0:
                 fish_price = get_price(fish_name)
-                loads_fishes[fish_name] -= 1
+                if loads_fishes[fish_name] < quantity:
+                    return f"{fish_name} 太少了!"
+                loads_fishes[fish_name] -= quantity
                 if loads_fishes[fish_name] == 0:
                     del loads_fishes[fish_name]
                 dump_fishes = json.dumps(loads_fishes)
                 user_update = update(FishingRecord).where(
                     FishingRecord.user_id == user_id
                 ).values(
-                    coin=fishes_record.coin + fish_price,
+                    coin=fishes_record.coin + fish_price * quantity,
                     fishes=dump_fishes
                 )
                 await session.execute(user_update)
                 await session.commit()
-                return f"你以 {fish_price} {fishing_coin_name} / 条的价格卖出了 {fish_name}"
+                return (f"你以 {fish_price} {fishing_coin_name} / 条的价格卖出了 {quantity} 条 {fish_name}, "
+                        f"你获得了 {fish_price * quantity} {fishing_coin_name}")
             return "查无此鱼"
         else:
             return "还没钓鱼就想卖鱼?"
