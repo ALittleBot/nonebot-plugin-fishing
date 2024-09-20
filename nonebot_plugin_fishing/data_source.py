@@ -296,3 +296,26 @@ async def lottery(user_id: str) -> str:
             await session.execute(user_update)
             await session.commit()
             return f'你{"获得" if new_coin >= 0 else "血亏"}了 {abs(new_coin)} {fishing_coin_name}'
+
+
+async def give(user_id: str, fish_name: str, quantity: int = 1) -> str:
+    session = get_session()
+    async with session.begin():
+        select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
+        record = await session.scalar(select_user)
+        if record:
+            loads_fishes = json.loads(record.fishes)
+            try:
+                loads_fishes[fish_name] += quantity
+            except KeyError:
+                loads_fishes[fish_name] = quantity
+            dump_fishes = json.dumps(loads_fishes)
+            user_update = update(FishingRecord).where(
+                FishingRecord.user_id == user_id
+            ).values(
+                fishes=dump_fishes
+            )
+            await session.execute(user_update)
+            await session.commit()
+            return f"使用滥权之力成功使 {fish_name} 添加到 {user_id} 的背包之中 ヾ(≧▽≦*)o"
+        return "未查找到用户信息, 无法执行滥权操作 w(ﾟДﾟ)w"

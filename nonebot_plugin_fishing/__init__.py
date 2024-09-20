@@ -5,6 +5,7 @@ require("nonebot_plugin_orm")  # noqa
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters import Event, Message
 from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 
 import asyncio
 
@@ -22,7 +23,8 @@ from .data_source import (
     get_balance,
     free_fish,
     random_get_a_special_fish,
-    lottery
+    lottery,
+    give
 )
 
 __plugin_meta__ = PluginMetadata(
@@ -42,6 +44,7 @@ sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额", "钓鱼余额"}, priority=5)
 free_fish_cmd = on_command("free_fish", aliases={"放生", "钓鱼放生"}, priority=5)
 lottery_cmd = on_command("lottery", aliases={"祈愿"}, priority=5)
+give_cmd = on_command("give", permission=SUPERUSER, priority=5)
 
 
 @fishing.handle()
@@ -110,3 +113,13 @@ async def _(event: Event, arg: Message = CommandArg()):
 async def _(event: Event):
     user_id = event.get_user_id()
     await lottery_cmd.finish(await lottery(user_id))
+
+
+@give_cmd.handle()
+async def _(arg: Message = CommandArg()):
+    info = arg.extract_plain_text().split()
+    if len(info) < 2 or len(info) > 3:
+        await give_cmd.finish("请输入用户的 id 和鱼的名字和数量 (数量为1时可省略), 如 /give 114514 开发鱼 1")
+    else:
+        quantity = int(info[2]) if len(info) == 3 else 1
+        await give_cmd.finish(await give(info[0], info[1], quantity))
