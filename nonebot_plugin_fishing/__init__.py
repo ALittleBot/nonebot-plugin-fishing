@@ -21,7 +21,8 @@ from .data_source import (
     sell_fish,
     get_balance,
     free_fish,
-    random_get_a_special_fish
+    random_get_a_special_fish,
+    lottery
 )
 
 __plugin_meta__ = PluginMetadata(
@@ -40,6 +41,7 @@ backpack = on_command("backpack", aliases={"背包", "钓鱼背包"}, priority=5
 sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额", "钓鱼余额"}, priority=5)
 free_fish_cmd = on_command("free_fish", aliases={"放生", "钓鱼放生"}, priority=5)
+lottery_cmd = on_command("lottery", aliases={"祈愿"}, priority=5)
 
 
 @fishing.handle()
@@ -102,3 +104,9 @@ async def _(event: Event, arg: Message = CommandArg()):
         await free_fish_cmd.finish("请输入要放生的鱼的名字, 如 /放生 测试鱼")
     user_id = event.get_user_id()
     await free_fish_cmd.finish(await free_fish(user_id, fish_name))
+
+
+@lottery_cmd.handle()
+async def _(event: Event):
+    user_id = event.get_user_id()
+    await lottery_cmd.finish(await lottery(user_id))

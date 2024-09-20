@@ -272,3 +272,27 @@ async def free_fish(user_id: str, fish_name: str) -> str:
             await session.commit()
             return f"你花费 {config.special_fish_price} {fishing_coin_name} 放生了 {fish_name}, 未来或许会被有缘人钓到呢"
         return "你甚至还没钓过鱼"
+
+
+async def lottery(user_id: str) -> str:
+    """算法来自于 https://github.com/fossifer/minesweeperbot/blob/master/cards.py"""
+    session = get_session()
+    async with session.begin():
+        select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
+        fishes_record = await session.scalar(select_user)
+        if fishes_record:
+            user_coin = fishes_record.coin
+            if user_coin <= 0:
+                return f"你只有 {user_coin} {fishing_coin_name}, 不足以祈愿"
+            new_coin = abs(user_coin) / 3
+            new_coin = random.randrange(5000, 15000) / 10000 * new_coin
+            new_coin = int(new_coin) if new_coin > 1 else 1
+            new_coin *= random.randrange(-1, 2, 2)
+            user_update = update(FishingRecord).where(
+                FishingRecord.user_id == user_id
+            ).values(
+                coin=fishes_record.coin + new_coin,
+            )
+            await session.execute(user_update)
+            await session.commit()
+            return f'你{"获得" if new_coin >= 0 else "血亏"}了 {abs(new_coin)} {fishing_coin_name}'
