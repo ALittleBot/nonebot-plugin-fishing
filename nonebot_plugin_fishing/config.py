@@ -4,7 +4,6 @@ from nonebot import get_plugin_config
 
 
 class Config(BaseModel):
-
     fishes: List[Dict] = [
         {
             "name": "小鱼",
@@ -41,6 +40,15 @@ class Config(BaseModel):
     special_fish_price: int = 50
 
     special_fish_probability: float = 0.01
+
+    fishing_achievement: List[Dict] = [
+        {
+            "type": "fishing_frequency",
+            "name": "腥味十足的生意",
+            "data": 1,
+            "description": "钓到一条鱼。"
+        }
+    ]
 
 
 config = get_plugin_config(Config)

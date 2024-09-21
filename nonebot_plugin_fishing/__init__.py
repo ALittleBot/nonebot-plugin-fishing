@@ -24,7 +24,8 @@ from .data_source import (
     free_fish,
     random_get_a_special_fish,
     lottery,
-    give
+    give,
+    check_achievement
 )
 
 __plugin_meta__ = PluginMetadata(
@@ -64,6 +65,7 @@ async def _(event: Event):
     result = f"钓到了一条{fish}, 你把它收进了背包里"
     await save_fish(user_id, fish)
     await asyncio.sleep(sleep_time)
+    await fishing.send(await check_achievement(user_id))
     await fishing.finish(result)
 
 

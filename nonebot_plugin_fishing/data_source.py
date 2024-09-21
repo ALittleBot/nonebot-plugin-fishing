@@ -58,6 +58,22 @@ def can_free_fish() -> bool:
     return config.special_fish_enabled
 
 
+async def check_achievement(user_id: str) -> str | None:  # Todo 查看进度完成情况
+    session = get_session()
+    async with session.begin():
+        select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
+        record = await session.scalar(select_user)
+        if record:
+            fishing_frequency = record.frequency
+    achievements = config.fishing_achievement
+    for achievement in achievements:
+        if achievement["type"] == "fishing_frequency":
+            if achievement["data"] <= fishing_frequency:
+                return f"""达成进度: {achievement["name"]}\n{achievement["description"]}"""
+    else:
+        return
+
+
 async def save_fish(user_id: str, fish_name: str) -> None:
     """向数据库写入鱼以持久化保存"""
     time_now = int(time.time())
@@ -73,11 +89,12 @@ async def save_fish(user_id: str, fish_name: str) -> None:
             except KeyError:
                 loads_fishes[fish_name] = 1
             dump_fishes = json.dumps(loads_fishes)
+            new_frequency = record.frequency + 1
             user_update = update(FishingRecord).where(
                 FishingRecord.user_id == user_id
             ).values(
                 time=time_now + fishing_limit,
-                frequency=record.frequency + 1,
+                frequency=new_frequency,
                 fishes=dump_fishes
             )
             await session.execute(user_update)
