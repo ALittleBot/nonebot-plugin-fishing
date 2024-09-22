@@ -11,6 +11,7 @@ class FishingRecord(Model):
     fishes: Mapped[str] = mapped_column(TEXT)
     special_fishes: Mapped[str] = mapped_column(TEXT)
     coin: Mapped[int] = mapped_column(default=0)
+    achievements: Mapped[str] = mapped_column(TEXT)
 
 
 class SpecialFishes(Model):

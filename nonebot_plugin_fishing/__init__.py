@@ -25,7 +25,8 @@ from .data_source import (
     random_get_a_special_fish,
     lottery,
     give,
-    check_achievement
+    check_achievement,
+    get_achievements
 )
 
 __plugin_meta__ = PluginMetadata(
@@ -45,6 +46,7 @@ sell = on_command("sell", aliases={"卖鱼"}, priority=5)
 balance = on_command("balance", aliases={"余额", "钓鱼余额"}, priority=5)
 free_fish_cmd = on_command("free_fish", aliases={"放生", "钓鱼放生"}, priority=5)
 lottery_cmd = on_command("lottery", aliases={"祈愿"}, priority=5)
+achievement_cmd = on_command("achievement", aliases={"成就", "钓鱼成就"}, priority=5)
 give_cmd = on_command("give", permission=SUPERUSER, priority=5)
 
 
@@ -65,7 +67,10 @@ async def _(event: Event):
     result = f"钓到了一条{fish}, 你把它收进了背包里"
     await save_fish(user_id, fish)
     await asyncio.sleep(sleep_time)
-    await fishing.send(await check_achievement(user_id))
+    achievements = await check_achievement(user_id)
+    if achievements is not None:
+        for achievement in achievements:
+            await fishing.send(achievement)
     await fishing.finish(result)
 
 
@@ -125,3 +130,9 @@ async def _(arg: Message = CommandArg()):
     else:
         quantity = int(info[2]) if len(info) == 3 else 1
         await give_cmd.finish(await give(info[0], info[1], quantity))
+
+
+@achievement_cmd.handle()
+async def _(event: Event):
+    user_id = event.get_user_id()
+    await achievement_cmd.finish(await get_achievements(user_id))

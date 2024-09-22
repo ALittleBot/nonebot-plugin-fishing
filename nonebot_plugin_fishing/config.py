@@ -21,13 +21,13 @@ class Config(BaseModel):
             "name": "小杂鱼~♡",
             "frequency": 3,
             "weight": 5,
-            "price": 20
+            "price": 100
         },
         {
             "name": "烤激光鱼",
             "frequency": 10,
             "weight": 1,
-            "price": 50
+            "price": 1000
         }
     ]
 
@@ -47,6 +47,24 @@ class Config(BaseModel):
             "name": "腥味十足的生意",
             "data": 1,
             "description": "钓到一条鱼。"
+        },
+        {
+            "type": "fishing_frequency",
+            "name": "还是钓鱼大佬",
+            "data": 100,
+            "description": "累计钓鱼一百次。"
+        },
+        {
+            "type": "fish_type",
+            "name": "那是鱼吗？",
+            "data": "小杂鱼~♡",
+            "description": "获得#####。[原文如此]"
+        },
+        {
+            "type": "fish_type",
+            "name": "那一晚, 激光鱼和便携式烤炉都喝醉了",
+            "data": "烤激光鱼",
+            "description": "获得烤激光鱼。"
         }
     ]
 

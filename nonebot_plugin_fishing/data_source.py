@@ -58,20 +58,69 @@ def can_free_fish() -> bool:
     return config.special_fish_enabled
 
 
-async def check_achievement(user_id: str) -> str | None:  # Todo 查看进度完成情况
+async def check_achievement(user_id: str) -> str | None:
+    session = get_session()
+    async with session.begin():
+        record = await session.scalar(select(FishingRecord).where(FishingRecord.user_id == user_id))
+        if not record:
+            return None
+        fishing_frequency = record.frequency
+        user_fishes = json.loads(record.fishes)
+        achievements = config.fishing_achievement
+        result_list = []
+        for achievement in achievements:
+            achievement_name = achievement["name"]
+            if await is_exists_achievement(user_id, achievement_name):
+                continue
+            if (achievement["type"] == "fishing_frequency" and achievement["data"] <= fishing_frequency) or \
+                    (achievement["type"] == "fish_type" and achievement["data"] in user_fishes):
+                await save_achievement(user_id, achievement_name)
+                result_list.append(f"""达成成就: {achievement_name}\n{achievement["description"]}""")
+        return result_list if result_list != [] else None
+
+
+async def is_exists_achievement(user_id: str, achievement_name: str) -> bool:
     session = get_session()
     async with session.begin():
         select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
         record = await session.scalar(select_user)
         if record:
-            fishing_frequency = record.frequency
-    achievements = config.fishing_achievement
-    for achievement in achievements:
-        if achievement["type"] == "fishing_frequency":
-            if achievement["data"] <= fishing_frequency:
-                return f"""达成进度: {achievement["name"]}\n{achievement["description"]}"""
-    else:
-        return
+            loads_achievements = json.loads(record.achievements)
+            return achievement_name in loads_achievements
+        return False
+
+
+async def save_achievement(user_id: str, achievement_name: str):
+    time_now = int(time.time())
+    session = get_session()
+    async with session.begin():
+        select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
+        record = await session.scalar(select_user)
+        if record:
+            loads_achievements = json.loads(record.achievements)
+            loads_achievements.append(achievement_name)
+            dump_achievements = json.dumps(loads_achievements)
+            user_update = update(FishingRecord).where(
+                FishingRecord.user_id == user_id
+            ).values(
+                achievements=dump_achievements
+            )
+            await session.execute(user_update)
+            await session.commit()
+            return
+        data = []
+        dump_achievements = json.dumps(data)
+        new_record = FishingRecord(
+            user_id=user_id,
+            time=time_now,
+            frequency=0,
+            fishes="{}",
+            special_fishes="{}",
+            coin=0,
+            achievements=dump_achievements
+        )
+        session.add(new_record)
+        await session.commit()
 
 
 async def save_fish(user_id: str, fish_name: str) -> None:
@@ -110,7 +159,8 @@ async def save_fish(user_id: str, fish_name: str) -> None:
             frequency=1,
             fishes=dump_fishes,
             special_fishes="{}",
-            coin=0
+            coin=0,
+            achievements="[]"
         )
         session.add(new_record)
         await session.commit()
@@ -156,7 +206,8 @@ async def save_special_fish(user_id: str, fish_name: str) -> None:
                 frequency=1,
                 fishes="{}",
                 special_fishes=dump_fishes,
-                coin=0
+                coin=0,
+                achievements=[]
             )
             session.add(new_record)
         select_fish = select(SpecialFishes).where(
@@ -336,3 +387,14 @@ async def give(user_id: str, fish_name: str, quantity: int = 1) -> str:
             await session.commit()
             return f"使用滥权之力成功使 {fish_name} 添加到 {user_id} 的背包之中 ヾ(≧▽≦*)o"
         return "未查找到用户信息, 无法执行滥权操作 w(ﾟДﾟ)w"
+
+
+async def get_achievements(user_id: str) -> str:
+    session = get_session()
+    async with session.begin():
+        select_user = select(FishingRecord).where(FishingRecord.user_id == user_id)
+        record = await session.scalar(select_user)
+        if record:
+            achievements = json.loads(record.achievements)
+            return "已完成成就:\n" + "\n".join(achievements)
+        return "你甚至还没钓过鱼 (╬▔皿▔)╯"
